@@ -12,12 +12,12 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='htb',
-    version='0.3.0',
+    version='0.4.0',
 
     description='Hack the Box API',
     long_description=long_description,
 
-    url='https://gitlab.com/kulinacs/htb',
+    url='https://github.com/kulinacs/htb',
 
     author='Nicklaus McClendon',
     author_email='nicklaus@kulinacs.com',
@@ -27,13 +27,12 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: ISC License (ISCL)',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 
     keywords='hackthebox',
 
     packages=find_packages(),
 
-    install_requires=['bs4',
-                      'requests'],
+    install_requires=['requests'],
 )
