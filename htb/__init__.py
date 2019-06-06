@@ -158,7 +158,7 @@ class HTB:
         :returns: switch_vpn dict
         """
 
-        if lab not in ("usfree", "eufree", "usvip", "euvip"):
+        if lab not in ("usfree", "eufree", "usvip", "euvip", "euvipbeta"):
             raise HTBAPIError("invalid lab")
         else:
             return requests.post(self.BASE_URL + self._auth('/labs/switch/{}/'.format(lab))).json()
