@@ -2,4 +2,4 @@
 Hack the Box
 ============
 
-A Python wrapper to interact with hackthebox.eu
+An unofficial Python wrapper to interact with hackthebox.eu

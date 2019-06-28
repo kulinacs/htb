@@ -3,6 +3,8 @@ A wrapper around the Hack the Box API
 """
 import requests
 
+__version__ = '1.0.0'
+
 class HTBAPIError(Exception):
     """Raised when API fails"""
     pass
@@ -12,12 +14,14 @@ class HTB:
     Hack the Box API Wrapper
 
     :attr api_key: API Key used for authenticated queries
+    :attr user_agent: The User-Agent to be used with all requests
     """
 
     BASE_URL = 'https://www.hackthebox.eu/api'
 
-    def __init__(self, api_key):
+    def __init__(self, api_key, user_agent='Python HTB Client/{}'.format(__version__)):
         self.api_key = api_key
+        self.headers = {'User-Agent': user_agent}
 
     @staticmethod
     def _validate_response(response):
@@ -31,27 +35,25 @@ class HTB:
             raise HTBAPIError("success != 1")
         return response
 
-    @classmethod
-    def _get(cls, path: str) -> dict:
+    def _get(self, path: str) -> dict:
         """
         Helper function to get an API endpoint and validate the response
 
-        :params cls: the HTB class
+        :params self: the HTB object
         :params path: the path to get including leading forward slash
         :returns: the response dict from the endpoint
         """
-        return HTB._validate_response(requests.get(cls.BASE_URL + path).json())
+        return HTB._validate_response(requests.get(self.BASE_URL + path, headers=self.headers).json())
 
-    @classmethod
-    def _post(cls, path: str, data: dict = None) -> dict:
+    def _post(self, path: str, data: dict = None) -> dict:
         """
         Helper function to get an API endpoint and validate the response
 
-        :params cls: the HTB class
+        :params self: the HTB object
         :params path: the path to get including leading forward slash
         :returns: the response dict from the endpoint
         """
-        return HTB._validate_response(requests.post(cls.BASE_URL + path, data=data).json())
+        return HTB._validate_response(requests.post(self.BASE_URL + path, data=data, headers=self.headers).json())
 
     def _auth(self, path: str) -> str:
         """
@@ -63,18 +65,16 @@ class HTB:
         """
         return "{}?api_token={}".format(path, self.api_key)
 
-    @classmethod
-    def global_stats(cls) -> dict:
+    def global_stats(self) -> dict:
         """
         Returns current stats about Hack the Box
 
         :params cls: the HTB class
         :returns: global stats dict
         """
-        return cls._post('/stats/global')
+        return self._post('/stats/global')
 
-    @classmethod
-    def overview_stats(cls) -> dict:
+    def overview_stats(self) -> dict:
         """
         Returns overview stats about Hack the Box
 
@@ -83,10 +83,9 @@ class HTB:
         :params cls: the HTB class
         :returns: overview stats dict
         """
-        return requests.get(cls.BASE_URL + '/stats/overview').json()
+        return requests.get(self.BASE_URL + '/stats/overview', headers=self.headers).json()
 
-    @classmethod
-    def daily_owns(cls, count: int = 30) -> dict:
+    def daily_owns(self, count: int = 30) -> dict:
         """
         Returns the number of owns and total number of users after the last COUNT days
 
@@ -94,7 +93,7 @@ class HTB:
         :params count: the number of days to get data from
         :returns: daily owns dict
         """
-        return cls._post('/stats/daily/owns/{}'.format(count))
+        return self._post('/stats/daily/owns/{}'.format(count))
 
     def list_conversations(self) -> dict:
         """
@@ -105,7 +104,7 @@ class HTB:
         :params self: HTB object in use
         :returns: conversations dict
         """
-        return requests.post(self.BASE_URL + self._auth('/conversations/list/')).json()
+        return requests.post(self.BASE_URL + self._auth('/conversations/list/'), headers=self.headers).json()
 
     def vpn_freeslots(self) -> dict:
         """
@@ -134,7 +133,7 @@ class HTB:
         :params self: HTB object in use
         :returns: connection_status dict
         """
-        return requests.post(self.BASE_URL + self._auth('/users/htb/connection/status/')).json()
+        return requests.post(self.BASE_URL + self._auth('/users/htb/connection/status/'), headers=self.headers).json()
 
     def fortress_connection_status(self) -> dict:
         """
@@ -145,7 +144,7 @@ class HTB:
         :params self: HTB object in use
         :returns: fortress_connection_status dict
         """
-        return requests.post(self.BASE_URL + self._auth('/users/htb/fortress/connection/status/')).json()
+        return requests.post(self.BASE_URL + self._auth('/users/htb/fortress/connection/status/'), headers=self.headers).json()
 
     def switch_vpn(self, lab: str) -> dict:
         """
@@ -161,7 +160,7 @@ class HTB:
         if lab not in ("usfree", "eufree", "usvip", "euvip", "euvipbeta"):
             raise HTBAPIError("invalid lab")
         else:
-            return requests.post(self.BASE_URL + self._auth('/labs/switch/{}/'.format(lab))).json()
+            return requests.post(self.BASE_URL + self._auth('/labs/switch/{}/'.format(lab)), headers=self.headers).json()
 
     def get_machines(self) -> dict:
         """
@@ -170,7 +169,7 @@ class HTB:
         :params self: HTB object in use
         :returns: machines dict
         """
-        return requests.get(self.BASE_URL + self._auth('/machines/get/all/')).json()
+        return requests.get(self.BASE_URL + self._auth('/machines/get/all/'), headers=self.headers).json()
 
     def get_machine(self, mid: int) -> dict:
         """
@@ -180,7 +179,7 @@ class HTB:
         :params mid: Machine ID
         :returns: machine dict
         """
-        return requests.get(self.BASE_URL + self._auth('/machines/get/{}/'.format(mid))).json()
+        return requests.get(self.BASE_URL + self._auth('/machines/get/{}/'.format(mid)), headers=self.headers).json()
 
     def own_machine_user(self, mid: int, hsh: str, diff: int) -> bool:
         """

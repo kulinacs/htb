@@ -12,7 +12,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='htb',
-    version='0.4.0',
+    version='1.0.0',
 
     description='Hack the Box API',
     long_description=long_description,
