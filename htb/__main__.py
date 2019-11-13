@@ -293,8 +293,7 @@ def parse_args():
         sys.exit(1)
     return args, parser
 
-
-if __name__ == "__main__":
+def main():
     load_config()
     args, parser = parse_args()
     if args.command is None:
