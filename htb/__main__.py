@@ -296,6 +296,9 @@ def parse_args():
 if __name__ == "__main__":
     load_config()
     args, parser = parse_args()
+    if "commmand" not in args:
+        parser.print_help()
+        sys.exit(1)
     if args.command != "config" and (not apiKey or not lab):
         print("You must configure your apiKey before interacting with the HTB API.\n\nTry running 'htb config --apiKey=[your apiKey here]'")
         sys.exit(1)
