@@ -98,7 +98,7 @@ $ htb list
 
 **Info**
 
-You can see data on a single machine with the indo command.
+You can see data on a single machine with the info command.
 
 ```bash
 $ htb info -h
@@ -214,7 +214,7 @@ $ htb own -h
 
 
 $ htb own --flag=abcdefghijklmnopqrstuvwxyz123456 --difficulty=5 heist
-# Attempting to own Heist with flag: ***REMOVED*** and rating: 5/9...
+# Attempting to own Heist with flag: abcdefghijklmnopqrstuvwxyz123456 and rating: 5/9...
 # Heist user is now owned.
 # 1
 
@@ -245,7 +245,6 @@ $ htb spawn chainsaw
 # Attempting to spawn Chainsaw. This request often takes ~30 seconds, so be patient please...
 # success: 1
 # status: You have been assigned as an owner of this machine.
-# An Error Occurred
 
 ```
 

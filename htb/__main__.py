@@ -178,7 +178,6 @@ def do_spawn(args):
         sys.exit(1)
     print(f"Attempting to spawn {args.box.capitalize()}. This request often takes ~30 seconds, so be patient please...")
     res, message = api.spawn_machine(get_id(args.box))
-    print(message)
     sys.exit(res)
 
 def do_own(args):
@@ -207,7 +206,6 @@ def do_terminate(args):
         sys.exit(1)
     print(f"Attempting to terminate {args.box.capitalize()}. This request often takes ~30 seconds, so be patient please...")
     res, message = api.terminate_machine(get_id(args.box))
-    print(message)
     sys.exit(res)
 
 def do_reset(args):
