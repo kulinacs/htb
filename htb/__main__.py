@@ -239,6 +239,7 @@ def parse_args():
         description="This is a simple command line utility for interacting with the Hack the Box API. In order to use this tool you must find your api key in your HTB settings and configure this tool to use it with `htb config --apiKey=YOURAPIKEY`",
         epilog="You must set your apiKey by running: htb config --apiKey=APIKEY --lab=[free or vip]" if not apiKey else "Try: htb [command] --help"
     )
+    parser.set_defaults(command=None)
     command_parsers = parser.add_subparsers(title="commands", prog="htb")
 
     config_parser = command_parsers.add_parser("config", help="configure this tool")
@@ -296,12 +297,13 @@ def parse_args():
 if __name__ == "__main__":
     load_config()
     args, parser = parse_args()
-    if "commmand" not in args:
+    if args.command is None:
         parser.print_help()
         sys.exit(1)
     if args.command != "config" and (not apiKey or not lab):
         print("You must configure your apiKey before interacting with the HTB API.\n\nTry running 'htb config --apiKey=[your apiKey here]'")
         sys.exit(1)
     init_api(apiKey)
-    load_machines()
+    if args.command != "config":
+        load_machines()
     args.func(args)
