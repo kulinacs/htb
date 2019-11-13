@@ -34,5 +34,5 @@ setup(
 
     packages=find_packages(),
 
-    install_requires=['requests'],
+    install_requires=['requests', 'argparse', 'tabulate'],
 )

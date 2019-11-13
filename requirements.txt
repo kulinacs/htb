@@ -1,1 +1,3 @@
 requests==2.21.0
+tabulate==0.8.5
+argparse==1.4.0

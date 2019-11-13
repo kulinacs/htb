@@ -7,7 +7,9 @@ __version__ = '1.1.0'
 
 class HTBAPIError(Exception):
     """Raised when API fails"""
-    pass
+    def __init__(self, expression, message=""):
+        self.expression = expression
+        self.message = message
 
 class HTB:
     """
@@ -32,7 +34,8 @@ class HTB:
         :returns: the response dict if the call was successfull
         """
         if response['success'] != '1':
-            raise HTBAPIError("success != 1")
+            message = "\n".join([ f"{k}: {v}" for k,v in response.items() ])
+            raise HTBAPIError("success != 1", message=message)
         return response
 
     def _get(self, path: str) -> dict:
@@ -162,6 +165,15 @@ class HTB:
         else:
             return requests.post(self.BASE_URL + self._auth('/labs/switch/{}/'.format(lab)), headers=self.headers).json()
 
+    def get_owns(self) -> dict:
+        """
+        Get which machines the user has owned.
+
+        :params self: HTB object in use
+        :returns: machines dict
+        """
+        return requests.get(self.BASE_URL + self._auth('/machines/owns'), headers=self.headers).json()
+
     def get_machines(self) -> dict:
         """
         Get all machines on the network
@@ -180,7 +192,56 @@ class HTB:
         :returns: machine dict
         """
         return requests.get(self.BASE_URL + self._auth('/machines/get/{}/'.format(mid)), headers=self.headers).json()
+    
+    def spawn_machine(self, mid: int, lab="vip") -> (int, str):
+        """
+        Spawn a machine
 
+        :params self: HTB object in use
+        :params mid: Machine ID
+        :params lab: vip for vip users, unknown for free.
+        :returns: bool if successful, str status message
+        """
+        try:
+            resp = self._post(self._auth('/vm/{}/assign/{}'.format(lab, mid))).json()
+            return (resp['success'], resp['status'])
+        except HTBAPIError as e:
+            print(e.message)
+            return False, "An Error Occurred"
+    
+    def terminate_machine(self, mid: int, lab="vip") -> (int, str):
+        """
+        Terminate a machine
+
+        :params self: HTB object in use
+        :params mid: Machine ID
+        :params lab: vip for vip users, unknown for free.
+        :returns: bool if successful, str status message
+        """
+        try:
+            resp = self._post(self._auth('/vm/{}/remove/{}'.format(lab, mid))).json()
+            return (resp['success'], resp['status'])
+        except HTBAPIError as e:
+            print(e.message)
+            return False, "An Error Occurred"
+    
+    def own_machine(self, mid: int, hsh: str, diff: int) -> (int, str):
+        """
+        Own a challenge on a machine
+
+        :params self: HTB object in use
+        :params mid: Machine ID
+        :params hsh: Flag Hash
+        :params diff: difficult (10-100)
+        :returns: bool if successful
+        """
+        try:
+            resp = self._post(self._auth('/machines/own'), {"id": mid, "flag": hsh, "difficulty": diff})
+            return (resp['success'], resp['status'])
+        except HTBAPIError as e:
+            print(e.message)
+            return False, "An Error Occurred"
+    
     def own_machine_user(self, mid: int, hsh: str, diff: int) -> bool:
         """
         Own a user challenge on a machine
